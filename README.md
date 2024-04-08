@@ -18,7 +18,6 @@ Once you have completed the task, please zip your repo & share it with TA Specia
     * Clean well-formatted code
     * Do not hardcode the calculators
     * Do not change the database, the application must use Sqlite
-    * Optimize for high load
 
 ### Task brief:
 
