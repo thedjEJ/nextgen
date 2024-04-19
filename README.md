@@ -1,7 +1,7 @@
 ﻿## Assessment
 
 Complete a small full stack solution to do tax calculations using .NET and MVC Razor and do some basic CRUD
-operations on SQL Server using Entity Framework (localdb provided with assignment).
+operations on Sqlite using Entity Framework (localdb provided with assignment).
 A previous junior developer started this project but was unable to complete it. 
 It is up to you to get it functioning as per the requirement, please feel free to add, remove or change whatever you need to.
 Once you have completed the task, please zip your repo & share it with TA Specialist you are working with via a Google Drive / similar link
