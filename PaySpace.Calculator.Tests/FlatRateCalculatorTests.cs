@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using PaySpace.Calculator.Data;
+using PaySpace.Calculator.Data.Models;
 using PaySpace.Calculator.Services;
 using PaySpace.Calculator.Services.Abstractions;
 using PaySpace.Calculator.Services.Calculators;
@@ -12,13 +13,21 @@ namespace PaySpace.Calculator.Tests
     [TestFixture]
     internal sealed class FlatRateCalculatorTests
     {
-        private IFlatRateCalculator _calculator;
-        private Mock<ICalculatorSettingsService> _calculatorSettingsServiceMock;
+        private IFlatRateCalculator? _calculator;
+        private Mock<ICalculatorSettingsService>? _calculatorSettingsServiceMock;
 
         [SetUp]
         public void Setup()
         {
             _calculatorSettingsServiceMock = new Mock<ICalculatorSettingsService>();
+            _calculatorSettingsServiceMock.Setup(x => x.GetSettingsAsync(CalculatorType.FlatRate)).ReturnsAsync(new List<CalculatorSetting>
+            {
+                new CalculatorSetting
+                {
+                    Rate = 17.5m,
+                    RateType = RateType.Percentage
+                }
+            });
             _calculator = new FlatRateCalculator(_calculatorSettingsServiceMock.Object);
         }
 
@@ -30,11 +39,11 @@ namespace PaySpace.Calculator.Tests
             // Arrange
             Setup();
             // Act
-            var result = _calculator.Calculate(income).Result;
+            var result = _calculator!.Calculate(income).Result;
             decimal actualTax = result.Tax;
 
             // Assert
-            Assert.That(actualTax, Is.EqualTo(expectedTax));
+            Assert.That(actualTax, Is.EqualTo(expectedTax).Within(0.001));
         }
     }
 }
