@@ -57,7 +57,7 @@ namespace PaySpace.Calculator.Web.Controllers
 
             return new CalculatorViewModel
             {
-                PostalCodes = postalCodes,
+                PostalCodes = postalCodes.ToList<>,
                 Income = request.Income,
                 PostalCode = request.PostalCode ?? string.Empty
             };

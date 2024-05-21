@@ -1,8 +1,10 @@
-﻿namespace PaySpace.Calculator.API.Models
+﻿using PaySpace.Calculator.Data.Models;
+
+namespace PaySpace.Calculator.API.Models
 {
     public sealed class CalculateResultDto
     {
-        public string Calculator { get; set; }
+        public CalculatorType Calculator { get; set; }
 
         public decimal Tax { get; set; }
     }

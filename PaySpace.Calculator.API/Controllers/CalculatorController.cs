@@ -24,7 +24,7 @@ namespace PaySpace.Calculator.API.Controllers
             try
             {
 
-                var result = 0; 
+                var result = new CalculateResult(); 
 
                 await historyService.AddAsync(new CalculatorHistory
                 {

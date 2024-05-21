@@ -7,7 +7,7 @@ namespace PaySpace.Calculator.Data.Models
         [Key]
         public long Id { get; set; }
 
-        public string PostalCode { get; set; }
+        public string? PostalCode { get; set; }
 
         public DateTime Timestamp { get; set; }
 
