@@ -1,8 +1,9 @@
 ﻿using MapsterMapper;
 
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using PaySpace.Calculator.API.Models;
+using PaySpace.Calculator.Data;
 using PaySpace.Calculator.Data.Models;
 using PaySpace.Calculator.Services.Abstractions;
 using PaySpace.Calculator.Services.Exceptions;
@@ -15,6 +16,10 @@ namespace PaySpace.Calculator.API.Controllers
     public sealed class CalculatorController(
         ILogger<CalculatorController> logger,
         IHistoryService historyService,
+        IPostalCodeService postalCodeService,
+        ICalculatorSettingsService calculatorService,
+        IFlatRateCalculator flatRateCalculator,
+        IFlatValueCalculator flatValueCalculator,
         IProgressiveCalculator progressiveCalculator,
         IMapper mapper)
         : ControllerBase
@@ -24,27 +29,33 @@ namespace PaySpace.Calculator.API.Controllers
         {
             try
             {
+                
                 CalculateResult result = new CalculateResult();
-                await progressiveCalculator.CalculateAsync(request.Income)
+                PostalCode taxRate = postalCodeService.GetPostalCodesAsync().Result.Where(x => x.Code.Equals(request.PostalCode)).First();
+                await calculatorService.GetSettingsAsync(taxRate.Calculator)
                     .ContinueWith(async task =>
                     {
-                        result = task.Result;
-                        await historyService.AddAsync(new CalculatorHistory
+                        if (taxRate.Calculator == CalculatorType.FlatRate)
                         {
-                            Tax = result.Tax,
-                            Calculator = result.Calculator,
-                            PostalCode = request.PostalCode ?? "Unknown",
-                            Income = request.Income
-                        });
+                            result = await flatRateCalculator.Calculate(request.Income);
+                        }
+                        else if (taxRate.Calculator == CalculatorType.FlatValue)
+                        {
+                            result = await flatValueCalculator.CalculateAsync(request.Income);
+                        }
+                        else
+                        {
+                            result = await progressiveCalculator.CalculateAsync(request.Income);
+                        }
                     });
 
-                /*await historyService.AddAsync(new CalculatorHistory
+                await historyService.AddAsync(new CalculatorHistory
                 {
                     Tax = result.Tax,
                     Calculator = result.Calculator,
                     PostalCode = request.PostalCode ?? "Unknown",
                     Income = request.Income
-                });*/
+                });
                 
 
                 return this.Ok(mapper.Map<CalculateResultDto>(result));

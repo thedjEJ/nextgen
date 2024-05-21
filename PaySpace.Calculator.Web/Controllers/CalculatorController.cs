@@ -51,16 +51,26 @@ namespace PaySpace.Calculator.Web.Controllers
             return this.View(vm);
         }
 
-        private async Task<CalculatorViewModel> GetCalculatorViewModelAsync(CalculateRequestViewModel? request = null)
+        private async Task<CalculatorViewModel> GetCalculatorViewModelAsync(CalculateRequestViewModel request = null)
         {
             var postalCodes = await calculatorHttpService.GetPostalCodesAsync();
 
             return new CalculatorViewModel
             {
-                PostalCodes = postalCodes.ToList<>,
+                PostalCodes = ConvertToSelectList(postalCodes),
                 Income = request.Income,
                 PostalCode = request.PostalCode ?? string.Empty
             };
+        }
+        private SelectList ConvertToSelectList(List<PostalCode> postalCodes)
+        {
+            var selectListItems = postalCodes.Select(pc => new SelectListItem
+            {
+                Value = pc.ToString(),
+                Text = pc.ToString()
+            }).ToList();
+
+            return new SelectList(selectListItems, "Value", "Text");
         }
     }
 }

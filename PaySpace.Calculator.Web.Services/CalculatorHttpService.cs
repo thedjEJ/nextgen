@@ -88,47 +88,8 @@ namespace PaySpace.Calculator.Web.Services
                         throw new Exception($"Cannot fetch history, status code: {response.StatusCode}");
                     }
 
-                    return await response.Content.ReadFromJsonAsync<CalculateResult>();
-                }
-            }
-            catch (ArgumentNullException ane)
-            {
-                throw new Exception("Cannot fetch history - null argument", ane);
-            }
-            catch (HttpRequestException hre)
-            {
-                throw new Exception("Cannot fetch history - http exception", hre);
-            }
-            catch (JsonException je)
-            {
-                throw new Exception("Cannot fetch history - json exception", je);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Cannot fetch history", e);
-            }
-        }
-
-        private async Task<T> callHTTPClient(string api)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    var response = await client.GetAsync(api);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw new Exception($"Cannot fetch {api}, status code:{response.StatusCode}");
-                    }
-                    await response.Content.ReadAsStringAsync().ContinueWith((Task<string> x) =>
-                    {
-                        if (x.IsFaulted)
-                            throw x.Exception;
-
-                        re = JsonConvert.DeserializeObject<T>(x.Result);
-                    });
-
-                    return await response.Content.ReadFromJsonAsync<List<T>>() ?? [];
+                    CalculateResult? result = await response.Content.ReadFromJsonAsync<CalculateResult>();
+                    return result;
                 }
             }
             catch (ArgumentNullException ane)
