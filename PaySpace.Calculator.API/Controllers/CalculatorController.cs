@@ -15,6 +15,7 @@ namespace PaySpace.Calculator.API.Controllers
     public sealed class CalculatorController(
         ILogger<CalculatorController> logger,
         IHistoryService historyService,
+        IProgressiveCalculator progressiveCalculator,
         IMapper mapper)
         : ControllerBase
     {
@@ -23,16 +24,28 @@ namespace PaySpace.Calculator.API.Controllers
         {
             try
             {
+                CalculateResult result = new CalculateResult();
+                await progressiveCalculator.CalculateAsync(request.Income)
+                    .ContinueWith(async task =>
+                    {
+                        result = task.Result;
+                        await historyService.AddAsync(new CalculatorHistory
+                        {
+                            Tax = result.Tax,
+                            Calculator = result.Calculator,
+                            PostalCode = request.PostalCode ?? "Unknown",
+                            Income = request.Income
+                        });
+                    });
 
-                var result = new CalculateResult(); 
-
-                await historyService.AddAsync(new CalculatorHistory
+                /*await historyService.AddAsync(new CalculatorHistory
                 {
                     Tax = result.Tax,
                     Calculator = result.Calculator,
                     PostalCode = request.PostalCode ?? "Unknown",
                     Income = request.Income
-                });
+                });*/
+                
 
                 return this.Ok(mapper.Map<CalculateResultDto>(result));
             }

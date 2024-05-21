@@ -13,6 +13,9 @@ namespace PaySpace.Calculator.Data
 
             modelBuilder.Entity<CalculatorSetting>()
                 .HasData(GetCalculatorSettings());
+
+            modelBuilder.Entity<CalculatorHistory>()
+                .HasData(GetCalculatorHistory());
         }
 
         private static IEnumerable<PostalCode> GetPostalCodes()
@@ -41,6 +44,14 @@ namespace PaySpace.Calculator.Data
                 new() { Id = 8, Calculator = CalculatorType.FlatValue, RateType = RateType.Amount, Rate = 10000, From = 200000, To = null },
 
                 new() { Id = 9, Calculator = CalculatorType.FlatRate, RateType = RateType.Percentage, Rate = 17.5M, From = 0, To = null },
+            };
+        }
+
+        private static IEnumerable<CalculatorHistory> GetCalculatorHistory()
+        {
+            return new List<CalculatorHistory>()
+            {
+                new () { Id = 1, PostalCode="7441", Income= 10000, Tax= 1500, Timestamp = DateTime.Now, Calculator=CalculatorType.FlatRate},
             };
         }
     }
