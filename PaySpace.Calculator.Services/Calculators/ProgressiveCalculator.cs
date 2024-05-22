@@ -24,11 +24,11 @@ namespace PaySpace.Calculator.Services.Calculators
             {
             foreach (CalculatorSetting taxRate in _taxBands.Where(x => x.Calculator.Equals(CalculatorType.Progressive)).OrderByDescending(x => x.From))
             {
-                if (untaxed > taxRate.From)
+                if (untaxed > (taxRate.From))
                 {
-                    decimal taxBracketPortion = (decimal)(untaxed - taxRate.From);
-                    tax += (taxBracketPortion) * (taxRate.Rate / 100);
-                    untaxed = taxRate.From;
+                    decimal taxBracketPortion = (decimal)(untaxed - (taxRate.From));
+                    tax += (taxBracketPortion) * (taxRate.Rate / 100.0m);
+                    untaxed = taxRate.From-1;
                 }
             }
             });
